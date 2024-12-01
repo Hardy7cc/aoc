@@ -44,7 +44,6 @@ part1 : Str -> Result Str _
 part1 = \input ->
     val =
         input
-        |> Str.split "\n"
         |> parseIntoLists
     dbg val
 
@@ -64,9 +63,11 @@ part1 = \input ->
 
 parseIntoLists = \input ->
     input
+    |> Str.trim
+    |> Str.splitOn "\n"
     |> List.walk { num1: [], num2: [] } \state, line ->
         ele =
-            Str.split line " "
+            Str.splitOn line " "
             |> List.keepOks Str.toU64
         when ele is
             [first, second] ->
@@ -75,14 +76,12 @@ parseIntoLists = \input ->
                     num2: List.append state.num2 second,
                 }
 
-            [] -> state
             _ -> crash "Parsing failed"
 
 part2 : Str -> Result Str _
 part2 = \input ->
     val =
         input
-        |> Str.split "\n"
         |> parseIntoLists
     dbg val
 
@@ -97,8 +96,11 @@ part2 = \input ->
     res = List.sum similarityList
     dbg res
 
+    # The expect with the exampl input works fine however my input resulting in 23981443 crashes here
     # roc nightly pre-release, built from commit c95fdd6 on Mi 13 Nov 2024 11:26:07 UTC
     # thread '<unnamed>' panicked at crates/compiler/mono/src/ir.rs:6191:56:
+    # roc nightly pre-release, built from commit d72da8e on Fr 29 Nov 2024 09:11:57 UTC
+    # thread '<unnamed>' panicked at crates/compiler/mono/src/ir.rs:6166:56:
     # called `Option::unwrap()` on a `None` value
     # Ok "$(res |> Num.toStr)"
     Err res
